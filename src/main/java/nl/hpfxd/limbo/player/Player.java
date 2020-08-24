@@ -74,11 +74,7 @@ public class Player {
                 this.sendPacket(new PacketSpawnPosition());
                 this.sendPacket(new PacketPositionAndLook(0, 0, 0, 0, 0));
 
-                this.keepAliveFuture = channel.eventLoop().scheduleAtFixedRate(() -> {
-                    System.out.println("keepalive");
-
-                    this.sendPacket(new PacketKeepAlive((int) (System.currentTimeMillis() / 10000)));
-                }, 5, 10, TimeUnit.SECONDS);
+                this.keepAliveFuture = channel.eventLoop().scheduleAtFixedRate(() -> this.sendPacket(new PacketKeepAlive((int) (System.currentTimeMillis() / 10000))), 5, 10, TimeUnit.SECONDS);
             }
         }
     }
