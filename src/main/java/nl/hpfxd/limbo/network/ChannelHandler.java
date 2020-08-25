@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.Getter;
 import lombok.extern.java.Log;
+import nl.hpfxd.limbo.Limbo;
 import nl.hpfxd.limbo.player.Player;
 
 @Log
@@ -12,14 +13,14 @@ public class ChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Getter private Player player;
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         log.info("Player connected.");
-        NetworkManager.getPlayers().add(this.player);
         this.player = new Player(ctx.channel());
+        Limbo.getInstance().getNetworkManager().getPlayers().add(this.player);
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         dispatchSession();
     }
 
@@ -29,7 +30,7 @@ public class ChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
         dispatchSession();
         log.severe("Player error.");
@@ -39,7 +40,7 @@ public class ChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     private void dispatchSession() {
         if (this.player == null) return;
         log.info("Player disconnected.");
-        NetworkManager.getPlayers().remove(this.player);
+        Limbo.getInstance().getNetworkManager().getPlayers().remove(this.player);
         this.player.destroy();
         this.player = null;
     }

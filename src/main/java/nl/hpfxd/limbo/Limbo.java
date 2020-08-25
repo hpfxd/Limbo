@@ -2,7 +2,9 @@ package nl.hpfxd.limbo;
 
 import lombok.Getter;
 import lombok.extern.java.Log;
+import nl.hpfxd.limbo.logging.LimboLogFormatter;
 import nl.hpfxd.limbo.network.NetworkManager;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Properties;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 @Log
 public class Limbo {
@@ -19,9 +24,12 @@ public class Limbo {
     @Getter private final Properties config = new Properties();
     @Getter private NetworkManager networkManager;
 
+    @Getter private JSONObject motd;
+    @Getter private int maxPlayers;
     @Getter private int port = -1;
 
     public void start(String[] args) {
+        this.configureLogger();
         if (args.length > 0) {
             try {
                 port = Integer.parseInt(args[0]);
@@ -65,10 +73,26 @@ public class Limbo {
             this.config.load(in);
         }
 
-        if (port == -1) {
-            port = Integer.parseInt(Limbo.getInstance().getConfig().getProperty("network.port"));
+        if (this.port == -1) {
+            this.port = Integer.parseInt(this.config.getProperty("network.port"));
         }
 
+        this.motd = new JSONObject(this.config.getProperty("server.motd"));
+        this.maxPlayers = Integer.parseInt(this.config.getProperty("server.maxplayers"));
+
         log.info("Config loaded.");
+    }
+
+    private void configureLogger() {
+        try {
+            Logger rootLogger = LogManager.getLogManager().getLogger("");
+            LimboLogFormatter formatter = new LimboLogFormatter();
+
+            for (Handler handler : rootLogger.getHandlers()) {
+                handler.setFormatter(formatter);
+            }
+        } catch (Exception e) {
+            log.info("Error configuring logger. " + e.getMessage());
+        }
     }
 }

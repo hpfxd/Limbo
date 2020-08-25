@@ -22,7 +22,7 @@ import java.util.List;
 
 @Log
 public class NetworkManager {
-    @Getter private static final List<Player> players = new ArrayList<>();
+    @Getter private final List<Player> players = new ArrayList<>();
     private EventLoopGroup bossgroup;
 
     public void start() {
