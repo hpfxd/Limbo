@@ -27,6 +27,12 @@ public class NetworkManager {
 
     public void start() {
         log.info("Starting network manager.");
+
+        if (Epoll.isAvailable()) {
+            log.info("Using Epoll transport.");
+        } else {
+            log.info("Epoll not available, falling back to NIO. Reason: " + Epoll.unavailabilityCause().getMessage());
+        }
         this.bossgroup = this.getEventLoopGroup();
         ServerBootstrap bootstrap = new ServerBootstrap()
                 .group(this.bossgroup)

@@ -8,13 +8,15 @@ import lombok.extern.java.Log;
 import nl.hpfxd.limbo.Limbo;
 import nl.hpfxd.limbo.player.Player;
 
+import java.util.logging.Level;
+
 @Log
 public class ChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Getter private Player player;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        log.info("Player connected.");
+        log.fine("Player connected.");
         this.player = new Player(ctx.channel());
         Limbo.getInstance().getNetworkManager().getPlayers().add(this.player);
     }
@@ -33,13 +35,12 @@ public class ChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
         dispatchSession();
-        log.severe("Player error.");
-        cause.printStackTrace();
+        log.log(Level.WARNING, "Player error.", cause);
     }
 
     private void dispatchSession() {
         if (this.player == null) return;
-        log.info("Player disconnected.");
+        log.fine("Player disconnected.");
         Limbo.getInstance().getNetworkManager().getPlayers().remove(this.player);
         this.player.destroy();
         this.player = null;

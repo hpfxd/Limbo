@@ -10,7 +10,8 @@ public class LimboLogFormatter extends Formatter {
 
     @Override
     public String format(LogRecord record) {
-        Object[] arguments = new Object[]{record.getLoggerName(), record.getLevel(), Thread.currentThread().getName(), new Date(record.getMillis()), record.getMessage(), record.getSourceMethodName()};
+        String[] str = record.getLoggerName().split("\\.");
+        Object[] arguments = new Object[]{str[str.length - 1], record.getLevel(), Thread.currentThread().getName(), new Date(record.getMillis()), record.getMessage(), record.getSourceMethodName()};
         return messageFormat.format(arguments);
     }
 }

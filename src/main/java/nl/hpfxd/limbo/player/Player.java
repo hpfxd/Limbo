@@ -115,7 +115,7 @@ public class Player {
             }
         } else if (this.state == ProtocolState.STATUS) {
             if (id == 0x00) { // ping request
-                log.info("Player pinging.");
+                log.fine("Player pinging.");
                 JSONObject json = new JSONObject()
                         .put("players", new JSONObject()
                                 .put("max", Limbo.getInstance().getMaxPlayers())
