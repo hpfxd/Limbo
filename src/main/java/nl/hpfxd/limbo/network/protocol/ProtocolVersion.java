@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ProtocolVersion {
+    /**
+     * Used for allowing connections based on version.
+     */
     public static final List<Integer> supportedVersions = Arrays.asList(
             ProtocolVersion.PROTOCOL_1_7_10,
             ProtocolVersion.PROTOCOL_1_8

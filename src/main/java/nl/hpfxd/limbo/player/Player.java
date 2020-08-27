@@ -12,6 +12,7 @@ import nl.hpfxd.limbo.network.packet.packets.login.PacketLoginSuccess;
 import nl.hpfxd.limbo.network.packet.packets.play.*;
 import nl.hpfxd.limbo.network.packet.packets.status.PacketServerListPingResponse;
 import nl.hpfxd.limbo.network.packet.packets.status.PacketServerListPong;
+import nl.hpfxd.limbo.network.protocol.ChatMessagePosition;
 import nl.hpfxd.limbo.network.protocol.PacketUtils;
 import nl.hpfxd.limbo.network.protocol.ProtocolState;
 import nl.hpfxd.limbo.network.protocol.ProtocolVersion;
@@ -36,6 +37,7 @@ public class Player {
     @Getter private UUID uniqueId;
 
     private ScheduledFuture<?> keepAliveFuture;
+    private ScheduledFuture<?> actionBarFuture;
 
     public Player(Channel channel) {
         this.channel = channel;
@@ -45,6 +47,11 @@ public class Player {
         if (this.keepAliveFuture != null) {
             this.keepAliveFuture.cancel(false);
             this.keepAliveFuture = null;
+        }
+
+        if (this.actionBarFuture != null) {
+            this.actionBarFuture.cancel(false);
+            this.actionBarFuture = null;
         }
     }
 
@@ -87,12 +94,22 @@ public class Player {
                 this.sendPacket(new PacketJoinGame(0, 1, 0, 0, 1, "flat", false));
                 this.sendPacket(new PacketSpawnPosition());
                 this.sendPacket(new PacketPositionAndLook(0, 100, 0, 0, 0));
-                this.sendPacket(new PacketChatMessage("{ \"text\": \"Sprock was here\"}", (byte) 2));
-                this.sendPacket(new PacketExtraTablistInfo("{ \"text\": \"Sprock was here\"}", "{ \"text\": \"Limbo | github.com/hpfxd/Limbo\"}"));
+
+                if (Limbo.getInstance().getJoinMessage() != null) {
+                    this.sendPacket(new PacketChatMessage(Limbo.getInstance().getJoinMessage(), ChatMessagePosition.SYSTEM));
+                }
+
+                if (this.version >= ProtocolVersion.PROTOCOL_1_8 && Limbo.getInstance().getJoinMessage() != null) {
+                    this.sendPacket(new PacketExtraTablistInfo(Limbo.getInstance().getPlayerListHeader(), Limbo.getInstance().getPlayerListFooter()));
+                }
 
                 log.info("Player " + this.name + " joined the game.");
 
                 this.keepAliveFuture = channel.eventLoop().scheduleAtFixedRate(() -> this.sendPacket(new PacketKeepAlive((int) (System.currentTimeMillis() / 10000))), 5, 10, TimeUnit.SECONDS);
+
+                if (this.version >= ProtocolVersion.PROTOCOL_1_8 && Limbo.getInstance().getActionBarMessage() != null) {
+                    this.actionBarFuture = channel.eventLoop().scheduleAtFixedRate(() -> this.sendPacket(new PacketChatMessage(Limbo.getInstance().getActionBarMessage(), ChatMessagePosition.ACTIONBAR)), 0, 2, TimeUnit.SECONDS);
+                }
             } else {
                 this.invalidPacket();
             }

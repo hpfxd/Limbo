@@ -24,9 +24,14 @@ public class Limbo {
     @Getter private final Properties config = new Properties();
     @Getter private NetworkManager networkManager;
 
+    // some config properties, just used so we don't have to look them up in a hashtable every time
     @Getter private JSONObject motd;
     @Getter private int maxPlayers;
     @Getter private int port = -1;
+    @Getter private String joinMessage;
+    @Getter private String actionBarMessage;
+    @Getter private String playerListHeader;
+    @Getter private String playerListFooter;
 
     public void start(String[] args) {
         this.configureLogger();
@@ -79,6 +84,13 @@ public class Limbo {
 
         this.motd = new JSONObject(this.config.getProperty("server.motd"));
         this.maxPlayers = Integer.parseInt(this.config.getProperty("server.maxplayers"));
+        this.joinMessage = this.config.getProperty("server.joinMessage");
+        this.actionBarMessage = this.config.getProperty("server.actionBarMessage");
+        this.playerListHeader = this.config.getProperty("server.playerList.header");
+        this.playerListFooter = this.config.getProperty("server.playerList.footer");
+        if (this.joinMessage == null || this.joinMessage.equals("NONE")) this.joinMessage = null;
+        if (this.actionBarMessage == null || this.actionBarMessage.equals("NONE")) this.actionBarMessage = null;
+        if (this.playerListHeader == null || this.playerListHeader.equals("NONE")) this.playerListHeader = null;
 
         log.info("Config loaded.");
     }
