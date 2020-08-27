@@ -13,7 +13,7 @@ public class PacketLoginDisconnect extends Packet {
     }
 
     @Override
-    public void write(ByteBuf buf) {
+    public void encode(ByteBuf buf) {
         PacketUtils.writeString(buf, this.reason);
     }
 }

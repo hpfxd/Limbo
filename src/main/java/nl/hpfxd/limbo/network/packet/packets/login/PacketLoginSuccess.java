@@ -17,7 +17,7 @@ public class PacketLoginSuccess extends Packet {
     }
 
     @Override
-    public void write(ByteBuf buf) {
+    public void encode(ByteBuf buf) {
         PacketUtils.writeString(buf, this.uniqueId.toString());
         PacketUtils.writeString(buf, this.name);
     }

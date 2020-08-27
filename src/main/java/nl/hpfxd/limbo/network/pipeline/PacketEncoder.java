@@ -11,7 +11,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
     protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) {
         try {
             PacketUtils.writeVarInt(out, packet.getPacketId());
-            packet.write(out);
+            packet.encode(out);
         } catch (Throwable t) {
             t.printStackTrace();
         }
