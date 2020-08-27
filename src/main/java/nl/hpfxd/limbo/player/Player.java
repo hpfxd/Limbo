@@ -86,7 +86,7 @@ public class Player {
 
                 this.sendPacket(new PacketJoinGame(0, 1, 0, 0, 1, "flat", false));
                 this.sendPacket(new PacketSpawnPosition());
-                this.sendPacket(new PacketPositionAndLook(0, 0, 0, 0, 0));
+                this.sendPacket(new PacketPositionAndLook(0, 100, 0, 0, 0));
                 log.info("Player " + this.name + " joined the game.");
 
                 this.keepAliveFuture = channel.eventLoop().scheduleAtFixedRate(() -> this.sendPacket(new PacketKeepAlive((int) (System.currentTimeMillis() / 10000))), 5, 10, TimeUnit.SECONDS);
