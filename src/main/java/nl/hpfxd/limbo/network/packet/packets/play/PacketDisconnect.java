@@ -14,7 +14,7 @@ public class PacketDisconnect extends Packet {
     }
 
     @Override
-    public void write(ByteBuf buf) {
+    public void encode(ByteBuf buf) {
         if (this.protocolVersion >= ProtocolVersion.PROTOCOL_1_12_2) {
             this.packetId = 0x1A;
         }

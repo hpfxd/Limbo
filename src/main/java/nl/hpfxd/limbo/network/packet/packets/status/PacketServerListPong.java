@@ -11,7 +11,7 @@ public class PacketServerListPong extends Packet {
         this.id = id;
     }
     @Override
-    public void write(ByteBuf buf) {
+    public void encode(ByteBuf buf) {
         buf.writeLong(id);
     }
 }
