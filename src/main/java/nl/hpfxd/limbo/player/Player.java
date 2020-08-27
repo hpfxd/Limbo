@@ -87,6 +87,9 @@ public class Player {
                 this.sendPacket(new PacketJoinGame(0, 1, 0, 0, 1, "flat", false));
                 this.sendPacket(new PacketSpawnPosition());
                 this.sendPacket(new PacketPositionAndLook(0, 100, 0, 0, 0));
+                this.sendPacket(new PacketChatMessage("{ \"text\": \"Sprock was here\"}", (byte) 2));
+                this.sendPacket(new PacketExtraTablistInfo("{ \"text\": \"Sprock was here\"}", "{ \"text\": \"Limbo | github.com/hpfxd/Limbo\"}"));
+
                 log.info("Player " + this.name + " joined the game.");
 
                 this.keepAliveFuture = channel.eventLoop().scheduleAtFixedRate(() -> this.sendPacket(new PacketKeepAlive((int) (System.currentTimeMillis() / 10000))), 5, 10, TimeUnit.SECONDS);
